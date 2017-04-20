@@ -166,11 +166,8 @@ class Sceen(object):
                         self.height += 400
                 self.draw_text(self.use)
                 self.use = ""                    
-                self.button1(self.green , 650, 100, 100, 50)
-                self.text_y_n("Yes", 680, 115)
-                self.button2(self.red , 650, 300, 100, 50)
-                self.text_y_n("No", 690, 315)
-##                print(self.yes, self.no, self.i, self.list)
+                self.button(self.b_green, self.green, 650, 100, 100, 50, "Yes", "Yes")
+                self.button(self.b_red, self.red, 650, 300, 100, 50, "No", "No")
             else:
                 self.last("Your number is %s" %str(guess.sent_AI(self.list)))  # output
             pygame.display.update()
@@ -179,35 +176,6 @@ class Sceen(object):
         fw, fh = self.font.size(text)
         surface = self.font.render(text, True, self.black )
         self.screen.blit(surface, ((self.width - fw) // 2, (self.height - fh) // 20))
-
-    def text_y_n(self, text, w, h): 
-        surface = self.font.render(text, True, self.black )
-        self.screen.blit(surface, (w, h))        
-
-    def button1(self, colour, w, h, w_p, h_p):        
-        mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
-        if w <= mouse[0] <= w + w_p and h <= mouse[1] <= h + h_p :
-            pygame.draw.rect(self.screen, colour, (w, h, w_p, h_p))
-            if click[0] == 1:
-                self.list[self.random_box[self.i]] = 1
-                self.yes += 1
-                self.i += 1
-                clock = pygame.time.wait(150)
-        else:
-            pygame.draw.rect(self.screen, colour, (w, h, w_p, h_p))
-
-    def button2(self, colour, w, h, w_p, h_p):        
-        mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
-        if w <= mouse[0] <= w + w_p and h <= mouse[1] <= h + h_p :
-            pygame.draw.rect(self.screen, colour, (w, h, w_p, h_p))
-            if click[0] == 1:
-                self.no += 1
-                self.i += 1
-                clock = pygame.time.wait(150)
-        else:
-            pygame.draw.rect(self.screen, colour, (w, h, w_p, h_p))
 
     def last(self, text):
         fw, fh = self.font.size(text)
@@ -254,8 +222,11 @@ class Sceen(object):
             pygame.display.update()
         if self.running:
             self.run()
-        if self.put_number == False:
+        if self.put_number == False and self.number_input != "":
             self.number()
+        else:
+            self.put_number = True
+            self.put_number_screen()
 
     def text_screen(self, text1, text2):
         surface = self.font.render(text1, True, self.black)
@@ -286,12 +257,21 @@ class Sceen(object):
                     self.put_number = False
                     self.number_run = True
                     clock = pygame.time.wait(150)
+                elif action == "No":
+                    self.no += 1
+                    self.i += 1
+                    clock = pygame.time.wait(150)
+                elif action == "Yes":
+                    self.list[self.random_box[self.i]] = 1
+                    self.yes += 1
+                    self.i += 1
+                    clock = pygame.time.wait(150)
                 elif action == "Quit":
                     pygame.quit()
                     quit()
         else:
             pygame.draw.rect(self.screen, color_button_2, (width, height, width_p, height_p))
-        self.text_button(text_1, width+(width_p//2), height+(height_p//2))
+        self.text_button(text_1, (width+(width_p//4)), (height+(height_p//3)))
 
 if __name__ == '__main__':
 
