@@ -136,7 +136,7 @@ class Sceen(object):
         self.number_input = ""
 
     def number(self):
-        pygame.mixer.music.load("Colorless_Aura.mp3")
+        pygame.mixer.music.load("Song\Colorless_Aura.mp3")
         pygame.mixer.music.play(-1)
         guess = random_number(int(self.number_input)) # input
         self.random_box = [i for i in range(guess.box)]
@@ -183,7 +183,7 @@ class Sceen(object):
         self.screen.blit(surface, ((self.width - fw) // 2, (self.height - fh) // 20))
 
     def run(self):
-        pygame.mixer.music.load("Darkest_Child_A.mp3")
+        pygame.mixer.music.load("Song\Darkest_Child_A.mp3")
         pygame.mixer.music.play(-1)
         black = self.black
         white = self.white        
@@ -201,7 +201,7 @@ class Sceen(object):
             self.put_number_screen()
 
     def put_number_screen(self):
-        pygame.mixer.music.load("Day_Of_Recon.mp3")
+        pygame.mixer.music.load("Song\Day_Of_Recon.mp3")
         pygame.mixer.music.play(-1)
         while self.put_number:
             for event in pygame.event.get():
@@ -224,9 +224,6 @@ class Sceen(object):
             self.run()
         if self.put_number == False and self.number_input != "":
             self.number()
-        else:
-            self.put_number = True
-            self.put_number_screen()
 
     def text_screen(self, text1, text2):
         surface = self.font.render(text1, True, self.black)
@@ -253,7 +250,7 @@ class Sceen(object):
                     self.running = True
                     self.put_number = False
                     clock = pygame.time.wait(150)
-                elif action == "Start":
+                elif action == "Start" and self.number_input != "":
                     self.put_number = False
                     self.number_run = True
                     clock = pygame.time.wait(150)
