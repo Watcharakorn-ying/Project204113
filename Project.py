@@ -250,7 +250,7 @@ class Sceen(object):
                     self.running = True
                     self.put_number = False
                     clock = pygame.time.wait(150)
-                elif action == "Start":
+                elif action == "Start" and self.number_input != "":
                     self.put_number = False
                     self.number_run = True
                     clock = pygame.time.wait(150)
