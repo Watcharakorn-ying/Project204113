@@ -118,7 +118,7 @@ class Sceen(object):
         self.font = pygame.font.SysFont('mono', 20, bold=True)
         self.white = (255,255,255)
         self.howto = pygame.image.load("Image\howto.jpg")
-        self.answer = pygame.image.load("Image\0.jpg")
+        self.answer = pygame.image.load("Image\last.jpg")
         self.black = (0,0,0)
         self.red = (255,0,0)
         self.b_red = (255, 0, 51)
@@ -138,7 +138,7 @@ class Sceen(object):
         self.back = True
     # หน้า How to play
     def run(self):
-        pygame.mixer.music.load("Darkest_Child_A.mp3")
+        pygame.mixer.music.load("Song\Darkest_Child_A.mp3")
         pygame.mixer.music.play(-1)
         while self.running:
             for event in pygame.event.get():
@@ -154,7 +154,7 @@ class Sceen(object):
             self.put_number_screen()
     # หน้าใส่ตัวเลข
     def put_number_screen(self):
-        pygame.mixer.music.load("Day_Of_Recon.mp3")
+        pygame.mixer.music.load("Song\Day_Of_Recon.mp3")
         pygame.mixer.music.play(-1)
         while self.put_number:
             for event in pygame.event.get():
@@ -216,7 +216,7 @@ class Sceen(object):
                 self.button(self.b_green, self.green, 650, 100, 100, 50, "Yes", "Yes")
                 self.button(self.b_red, self.red, 650, 300, 100, 50, "No", "No")
             else:
-                self.last("Your number is %s" %str(guess.sent_AI(self.list)))  # output
+##                self.last("Your number is %s" %str(guess.sent_AI(self.list)))  # output
                 self.number_run = False
             pygame.display.update()
         self.last_seen(str(guess.sent_AI(self.list)))
