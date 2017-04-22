@@ -104,11 +104,9 @@ class AI:
             if (x != 0) and (count not in self.match):
                 self.match.append(count)
             count += 1
-##        print(self.match)
         for cal in self.match:
             self.ai += (self.kd << cal)
-##        print(self.ai)
-
+            
 class Sceen(object):
 
     def __init__(self, width=640, height=400, fps=30):
@@ -119,6 +117,8 @@ class Sceen(object):
         self.screen = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE)
         self.font = pygame.font.SysFont('mono', 20, bold=True)
         self.white = (255,255,255)
+        self.howto = pygame.image.load("Image\howto.jpg")
+        self.answer = pygame.image.load("Image\0.jpg")
         self.black = (0,0,0)
         self.red = (255,0,0)
         self.b_red = (255, 0, 51)
@@ -133,75 +133,28 @@ class Sceen(object):
         self.running = True
         self.put_number = False
         self.number_run = False
+        self.last = True
         self.number_input = ""
-
-    def number(self):
-        pygame.mixer.music.load("Song\Colorless_Aura.mp3")
-        pygame.mixer.music.play(-1)
-        guess = random_number(int(self.number_input)) # input
-        self.random_box = [i for i in range(guess.box)]
-        random.shuffle(self.random_box)
-        self.list = [0] * guess.box
-        while self.number_run:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    quit()   
-            self.screen.fill(self.white)
-            if self.i < guess.box:
-                self.height = 400
-                a = list(map(str, guess.show(self.random_box[self.i])))
-                num = 0
-                for j in range(guess.length):
-                    if num < 10:
-                        self.use += str(a[j])
-                        self.use += " "
-                        num += 1
-                    else:
-                        self.draw_text(self.use)
-                        self.use = ""
-                        self.use += str(a[j])
-                        self.use += " "
-                        num = 1
-                        self.height += 400
-                self.draw_text(self.use)
-                self.use = ""                    
-                self.button(self.b_green, self.green, 650, 100, 100, 50, "Yes", "Yes")
-                self.button(self.b_red, self.red, 650, 300, 100, 50, "No", "No")
-            else:
-                self.last("Your number is %s" %str(guess.sent_AI(self.list)))  # output
-            pygame.display.update()
-
-    def draw_text(self, text):
-        fw, fh = self.font.size(text)
-        surface = self.font.render(text, True, self.black )
-        self.screen.blit(surface, ((self.width - fw) // 2, (self.height - fh) // 20))
-
-    def last(self, text):
-        fw, fh = self.font.size(text)
-        surface = self.font.render(text, True, self.black )
-        self.screen.blit(surface, ((self.width - fw) // 2, (self.height - fh) // 20))
-
+        self.back = True
+    # หน้า How to play
     def run(self):
-        pygame.mixer.music.load("Song\Darkest_Child_A.mp3")
+        pygame.mixer.music.load("Darkest_Child_A.mp3")
         pygame.mixer.music.play(-1)
-        black = self.black
-        white = self.white        
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()                     
-            self.screen.fill(white)
-            self.text_screen("Guess Number", "How to play")
-            self.button(self.b_green, self.green, 250, 500, 100, 50, "Next", "Next")
-            self.button(self.b_red, self.red, 450, 500, 100, 50, "Quit", "Quit")
+            self.screen.blit(self.howto,(0,0))
+            self.text_screen("", 150, 50, self.black)
+            self.button(self.b_green, self.green, 250, 530, 100, 50, "Next", "Next")
+            self.button(self.b_red, self.red, 450, 530, 100, 50, "Quit", "Quit")
             pygame.display.update()
         if self.put_number:
             self.put_number_screen()
-
+    # หน้าใส่ตัวเลข
     def put_number_screen(self):
-        pygame.mixer.music.load("Song\Day_Of_Recon.mp3")
+        pygame.mixer.music.load("Day_Of_Recon.mp3")
         pygame.mixer.music.play(-1)
         while self.put_number:
             for event in pygame.event.get():
@@ -215,28 +168,84 @@ class Sceen(object):
                         if event.unicode.isdigit():
                             self.number_input = self.number_input + event.unicode
             self.screen.fill(self.white)
-            self.text_screen("", "")
-            self.text_screen("Number",str(self.number_input))
+##            self.screen.blit(self.howto,(0,0))
+            self.text_screen(str(self.number_input), 100, 50, self.black)
             self.button(self.b_green, self.green, 250, 500, 100, 50, "Start", "Start")
             self.button(self.b_red, self.red, 450, 500, 100, 50, "Back", "Back")
+            if self.back is False:
+                if self.put_number == False and self.number_input == "":
+                    self.put_number = True
             pygame.display.update()
         if self.running:
             self.run()
-        if self.put_number == False and self.number_input != "":
+        else:
             self.number()
-
-    def text_screen(self, text1, text2):
-        surface = self.font.render(text1, True, self.black)
-        self.screen.blit(surface, (self.width // 2.6, self.height//20))
-        eiei = self.font.render(text2, True, self.black)
-        self.screen.blit(eiei, (self.width // 3, self.height // 10))
-
-    def text_button(self, tb, width, height):
-        surface_tb = self.font.render(tb, True, self.black)
-        self.screen.blit(surface_tb, (width, height))
-       
-
-    def button(self, color_button_1, color_button_2, width, height, width_p, height_p, action, text_1):
+    # หน้าแสดวงตัวเลขแล้วกด Y/N
+    def number(self):
+        pygame.mixer.music.load("Song\Colorless_Aura.mp3")
+        pygame.mixer.music.play(-1)
+        guess = random_number(int(self.number_input)) # input
+        self.random_box = [i for i in range(guess.box)]
+        random.shuffle(self.random_box)
+        self.list = [0] * guess.box
+        while self.number_run:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()   
+            self.screen.fill(self.white)
+##            self.screen.blit(self.howto,(0,0))
+            if self.i < guess.box:
+                self.height = 400
+                a = list(map(str, guess.show(self.random_box[self.i])))
+                num = 0
+                for j in range(guess.length):
+                    if num < 10:
+                        self.use += str(a[j])
+                        self.use += " "
+                        num += 1
+                    else:
+                        self.draw_text(self.use, self.black)
+                        self.use = ""
+                        self.use += str(a[j])
+                        self.use += " "
+                        num = 1
+                        self.height += 400
+                self.draw_text(self.use, self.black)
+                self.use = ""                    
+                self.button(self.b_green, self.green, 650, 100, 100, 50, "Yes", "Yes")
+                self.button(self.b_red, self.red, 650, 300, 100, 50, "No", "No")
+            else:
+                self.last("Your number is %s" %str(guess.sent_AI(self.list)))  # output
+                self.number_run = False
+            pygame.display.update()
+        self.last_seen(str(guess.sent_AI(self.list)))
+    # หน้าจบ
+    def last_seen(self, text):
+        x = 0
+        while self.last:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+            self.screen.blit(self.answer,(0,0))
+            clock = pygame.time.wait(30)
+            self.draw_text(text, self.white)
+            self.button(self.b_green, self.green, 250, 500, 100, 50, "MainMenu", "MainMenu")
+            self.button(self.b_red, self.red, 450, 500, 100, 50, "Quit", "Quit")
+            pygame.display.update()
+        self.put_number_screen()
+    # ตัวหนังสือ
+    def text_screen(self, text, width, height, color):
+        surface_text = self.font.render(text, True, color)
+        self.screen.blit(surface_text, (width, height))
+    # ตัวเลขตัวเลขที่ซุ่ม
+    def draw_text(self, text, color):
+        fw, fh = self.font.size(text)
+        surface = self.font.render(text, True, color)
+        self.screen.blit(surface, ((self.width - fw) // 2, (self.height - fh) // 20))
+    # ปุ่ม
+    def button(self, color_button_1, color_button_2, width, height, width_p, height_p, action, text_1): 
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         if width <= mouse[0] <= width + width_p and height <= mouse[1] <= height + height_p:
@@ -245,12 +254,15 @@ class Sceen(object):
                 if action == "Next":
                     self.running = False
                     self.put_number = True
+                    self.back = False
                     clock = pygame.time.wait(150)
                 elif action == "Back":
                     self.running = True
                     self.put_number = False
+                    self.back = True
                     clock = pygame.time.wait(150)
-                elif action == "Start" and self.number_input != "":
+                elif action == "Start":
+                    self.last = True
                     self.put_number = False
                     self.number_run = True
                     clock = pygame.time.wait(150)
@@ -263,13 +275,22 @@ class Sceen(object):
                     self.yes += 1
                     self.i += 1
                     clock = pygame.time.wait(150)
+                elif action == "MainMenu":
+                    self.last = False
+                    self.put_number = True
+                    self.number_run = False
+                    self.number_input = ""
+                    self.no = 0
+                    self.yes = 0
+                    self.i = 0
+                    self.list = []
+                    clock = pygame.time.wait(150)
                 elif action == "Quit":
                     pygame.quit()
                     quit()
         else:
             pygame.draw.rect(self.screen, color_button_2, (width, height, width_p, height_p))
-        self.text_button(text_1, (width+(width_p//4)), (height+(height_p//3)))
+        self.text_screen(text_1, (width+(width_p//4)), (height+(height_p//3)), self.black)
 
 if __name__ == '__main__':
-
     Sceen(800, 600).run()
