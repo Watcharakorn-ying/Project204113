@@ -117,8 +117,23 @@ class Sceen(object):
         self.screen = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE)
         self.font = pygame.font.SysFont('mono', 20, bold=True)
         self.white = (255,255,255)
-        self.howto = pygame.image.load("Image\howto.jpg")
-        self.answer = pygame.image.load("Image\last.jpg")
+        self.howto = pygame.image.load("Image\\howto.jpg")
+        self.answer = pygame.image.load("Image\\last.jpg")
+        self.yournumberis = pygame.image.load("Image\\yournumberisver2.jpg")
+        self.set_range = pygame.image.load("Image\\set_range.jpg")
+        self.boxnumber = pygame.image.load("Image\\boxnumber.jpg")
+        self.back_a = pygame.image.load("Image\\Aback.png")
+        self.back_b = pygame.image.load("Image\\Aback2.png")
+        self.next_a = pygame.image.load("Image\\next.png")
+        self.next_b = pygame.image.load("Image\\next2.png")
+        self.no_a = pygame.image.load("Image\\no.png")
+        self.no_b = pygame.image.load("Image\\no2.png")
+        self.quit_a = pygame.image.load("Image\\quit.png")
+        self.quit_b = pygame.image.load("Image\\quit2.png")
+        self.start_a = pygame.image.load("Image\\start.png")
+        self.start_b = pygame.image.load("Image\\start2.png")
+        self.yes_a = pygame.image.load("Image\\yes.png")
+        self.yes_b = pygame.image.load("Image\\yes2.png")
         self.black = (0,0,0)
         self.red = (255,0,0)
         self.b_red = (255, 0, 51)
@@ -167,8 +182,7 @@ class Sceen(object):
                     else:
                         if event.unicode.isdigit():
                             self.number_input = self.number_input + event.unicode
-            self.screen.fill(self.white)
-##            self.screen.blit(self.howto,(0,0))
+            self.screen.blit(self.set_range,(0,0))
             self.text_screen(str(self.number_input), 100, 50, self.black)
             self.button(self.b_green, self.green, 250, 500, 100, 50, "Start", "Start")
             self.button(self.b_red, self.red, 450, 500, 100, 50, "Back", "Back")
@@ -193,8 +207,7 @@ class Sceen(object):
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()   
-            self.screen.fill(self.white)
-##            self.screen.blit(self.howto,(0,0))
+            self.screen.blit(self.boxnumber,(0,0))
             if self.i < guess.box:
                 self.height = 400
                 a = list(map(str, guess.show(self.random_box[self.i])))
@@ -228,7 +241,7 @@ class Sceen(object):
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
-            self.screen.blit(self.answer,(0,0))
+            self.screen.blit(self.yournumberis,(0,0))
             clock = pygame.time.wait(30)
             self.draw_text(text, self.white)
             self.button(self.b_green, self.green, 250, 500, 100, 50, "MainMenu", "MainMenu")
