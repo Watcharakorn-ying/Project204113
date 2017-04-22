@@ -106,6 +106,8 @@ class AI:
             count += 1
         for cal in self.match:
             self.ai += (self.kd << cal)
+        if self.ai == 0:
+            self.ai = 'The number you have in mind are not in the input range.'
             
 class Sceen(object):
 
