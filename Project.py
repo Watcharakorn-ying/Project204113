@@ -195,6 +195,14 @@ class Screen(threading.Thread):
                     else:
                         if event.unicode.isdigit():
                             self.number_input = self.number_input + event.unicode
+                            if self.number_input != "":
+                                if int(self.number_input) == 0:
+                                    self.number_input = ""
+                                elif int(self.number_input) > 127:
+                                    if len(self.number_input) > 3:
+                                        self.number_input = self.number_input[:3]
+                                    else:
+                                        self.number_input = self.number_input[:2]
             self.screen.blit(pygame.image.load(self.background[1]),(0,0))
             font_center = (478 - self.font.size(self.number_input)[0]) // 2
             self.text_screen(str(self.number_input), font_center + 164, 260, self.black)
@@ -268,7 +276,7 @@ class Screen(threading.Thread):
                 out_put = (220 - self.font.size(text)[0]) // 2
                 self.screen.blit(fade, (out_put + 290,236))
                 clock = pygame.time.wait(30)
-                self.button(100, 490, 246, 42, "MainMenu", pygame.image.load(self.icon_bottom[13]), pygame.image.load(self.icon_bottom[12]))
+                self.button(100, 490, 246, 42, "NewGame", pygame.image.load(self.icon_bottom[13]), pygame.image.load(self.icon_bottom[12]))
                 self.button(447, 490, 246, 42, "Quit", pygame.image.load(self.icon_bottom[7]), pygame.image.load(self.icon_bottom[6]))
                 if i != 255:
                     i += 10 # ความเร็วตอนเฟด
@@ -321,7 +329,7 @@ class Screen(threading.Thread):
                     self.yes += 1
                     self.i += 1
                     clock = pygame.time.wait(150)
-                elif action == "MainMenu":
+                elif action == "NewGame":
                     self.use = ""
                     self.no = 0
                     self.yes = 0
@@ -332,7 +340,7 @@ class Screen(threading.Thread):
                     self.Provider = False
                     self.check_number = True
                     self.number_input = ""
-                    self.run()
+                    self.put_number_screen()
                 elif action == "Provider":
                     self.running = False
                     self.Provider = True
