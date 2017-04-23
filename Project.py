@@ -115,6 +115,8 @@ class Screen(threading.Thread):
         self.white = (255,255,255)
         self.background = read_folder("Image", ".jpg")
         self.icon_bottom = read_folder("Image", ".png")
+        self.witch_sound = pygame.mixer.Sound("Song\witch.wav")
+        self.button_a = pygame.mixer.Sound("Song\\01_button_sound.wav")
         self.black = (0,0,0)
         self.red = (255,0,0)
         self.b_red = (255, 0, 51)
@@ -133,6 +135,8 @@ class Screen(threading.Thread):
         self.number_input = ""
     # หน้าเริ่มโปรแกรม
     def run(self):
+        pygame.mixer.music.load("Song\Darkest_Child_A.mp3")
+        pygame.mixer.music.play(-1)
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -163,7 +167,7 @@ class Screen(threading.Thread):
             self.run()
     # หน้า How to play
     def how_to(self):
-        pygame.mixer.music.load("Song\Darkest_Child_A.mp3")
+        pygame.mixer.music.load("Song\Day_Of_Recon.mp3")
         pygame.mixer.music.play(-1)
         while self.running:
             for event in pygame.event.get():
@@ -182,7 +186,7 @@ class Screen(threading.Thread):
     # หน้าใส่ตัวเลข
     def put_number_screen(self):
         self.font = pygame.font.SysFont("CHILLER", 90, bold=True)
-        pygame.mixer.music.load("Song\Day_Of_Recon.mp3")
+        pygame.mixer.music.load("Song\Colorless_Aura.mp3")
         pygame.mixer.music.play(-1)
         while self.running:
             for event in pygame.event.get():
@@ -219,8 +223,6 @@ class Screen(threading.Thread):
             self.number()
     # หน้าแสดวงตัวเลขแล้วกด Y/N
     def number(self):
-        pygame.mixer.music.load("Song\Colorless_Aura.mp3")
-        pygame.mixer.music.play(-1)
         guess = random_number(int(self.number_input)) # input
         self.random_box = [i for i in range(guess.box)]
         random.shuffle(self.random_box)
@@ -255,9 +257,11 @@ class Screen(threading.Thread):
                 self.running = False
             pygame.display.update()
         self.running = True
+        pygame.mixer.music.pause()
         self.last_seen(str(guess.sent_AI(self.list)))
     # หน้าจบ
     def last_seen(self, text):
+        pygame.mixer.Sound.play(self.witch_sound)
         witch = pygame.image.load(self.background[3]).convert()
         pic = witch.get_rect()
         i = 0
@@ -268,12 +272,14 @@ class Screen(threading.Thread):
                     quit()
             witch.set_alpha(i)
             self.screen.blit(witch, pic)
-            if i != 255 :
-                i += 1
+            if i != 350 :
+                i += 5
             else:
                 break
             pygame.display.update()
             pygame.time.delay(50)
+        pygame.mixer.music.load("Song\Guess_Who.mp3")
+        pygame.mixer.music.play(-1)
         if text != '0':
             self.font = pygame.font.Font("CHILLER.TTF", 90)
             i = 0
@@ -293,7 +299,7 @@ class Screen(threading.Thread):
                 clock = pygame.time.wait(30)
                 self.button(100, 490, 246, 42, "NewGame", pygame.image.load(self.icon_bottom[13]), pygame.image.load(self.icon_bottom[12]))
                 self.button(447, 490, 246, 42, "Quit", pygame.image.load(self.icon_bottom[7]), pygame.image.load(self.icon_bottom[6]))
-                if i != 255:
+                if i != 380:
                     i += 10 # ความเร็วตอนเฟด
                 pygame.display.update()
                 pygame.time.delay(1) # ความสมูท
@@ -304,7 +310,7 @@ class Screen(threading.Thread):
                         pygame.quit()
                         quit()
                 self.screen.blit(pygame.image.load(self.background[6]),(0,0))
-                self.button(100, 490, 246, 42, "MainMenu", pygame.image.load(self.icon_bottom[13]), pygame.image.load(self.icon_bottom[12]))
+                self.button(100, 490, 246, 42, "NewGame", pygame.image.load(self.icon_bottom[13]), pygame.image.load(self.icon_bottom[12]))
                 self.button(447, 490, 246, 42, "Quit", pygame.image.load(self.icon_bottom[7]), pygame.image.load(self.icon_bottom[6]))
                 pygame.display.update()
             
@@ -326,6 +332,7 @@ class Screen(threading.Thread):
         if width <= mouse[0] <= width + width_p and height + 38 <= mouse[1] <= height + height_p + 38:
             self.screen.blit(a_new_button, (width,height))            
             if click[0] == 1:
+                pygame.mixer.Sound.play(self.button_a)
                 if action == "Next":
                     self.running = False
                     self.back = False
