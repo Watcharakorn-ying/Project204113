@@ -258,8 +258,23 @@ class Screen(threading.Thread):
         self.last_seen(str(guess.sent_AI(self.list)))
     # หน้าจบ
     def last_seen(self, text):
+        witch = pygame.image.load(self.background[3]).convert()
+        pic = witch.get_rect()
+        i = 0
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+            witch.set_alpha(i)
+            self.screen.blit(witch, pic)
+            if i != 255 :
+                i += 1
+            else:
+                break
+            pygame.display.update()
+            pygame.time.delay(50)
         if text != '0':
-            print("a")
             self.font = pygame.font.Font("CHILLER.TTF", 90)
             i = 0
             label = self.font.render(text,1,(255,255,255))
