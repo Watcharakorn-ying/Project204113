@@ -288,6 +288,8 @@ class Screen(threading.Thread):
     # หน้าจบ
     def last_seen(self, text):
         pygame.mixer.Sound.play(self.witch_sound)
+        pygame.mixer.music.load("Song\Guess_Who.mp3")
+        pygame.mixer.music.play(-1)
         witch = pygame.image.load(self.background[3]).convert()
         pic = witch.get_rect()
         i = 0
@@ -303,8 +305,6 @@ class Screen(threading.Thread):
                 break
             pygame.display.update()
             pygame.time.delay(50)
-        pygame.mixer.music.load("Song\Guess_Who.mp3")
-        pygame.mixer.music.play(-1)
         if text != '0':
             self.font = pygame.font.Font("CHILLER.TTF", 90)
             i = 0
@@ -415,6 +415,7 @@ class Screen(threading.Thread):
 def main():
     t1 = Screen(800, 600)
     t1.start()
+    print('start')
     
 
 if __name__ == '__main__':
