@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-# @Author: Nonp.znn
-# @Date:   2017-04-06 15:09:08
-# @Last Modified by:   Nonp.znn
-# @Last Modified time: 2017-04-07 17:39:22
+#!/usr/bin/env python3
 
 import pygame
 import random
