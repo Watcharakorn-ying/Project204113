@@ -247,6 +247,7 @@ class Screen(threading.Thread):
                     simon_done = False
                     self.start_anime = True
                     self.simon_anime()
+                    self.listen_command = False
                 else:Error
             except:
                 pass
@@ -284,6 +285,7 @@ class Screen(threading.Thread):
 
     # หน้าแสดวงตัวเลขแล้วกด Y/N
     def number(self):
+        global simon_done
         guess = random_number(int(self.number_input)) # input
         self.random_box = [i for i in range(guess.box)]
         random.shuffle(self.random_box)
@@ -294,6 +296,7 @@ class Screen(threading.Thread):
                     simon_done = False
                     self.start_anime = True
                     self.simon_anime()
+                    self.listen_command = False
                 else:Error
             except:
                 pass
@@ -305,7 +308,7 @@ class Screen(threading.Thread):
                 self.height = 2500
                 a = list(map(str, guess.show(self.random_box[self.i])))
                 num = 0
-                if self.i > 0 and self.listen_command:
+                if self.listen_command:
                     self.t2 = threading.Thread(target=self.simon_yes_no)
                     self.t2.start()
                 for j in range(guess.length):
@@ -471,7 +474,7 @@ class Screen(threading.Thread):
     ############################################################
     """
     def simon_wave(self):
-        print('wave')
+##        print('wave')
         self.CHUNK = 1024
         FORMAT = pyaudio.paInt16
         CHANNELS = 2
@@ -513,6 +516,7 @@ class Screen(threading.Thread):
         global T_wave
         pygame.time.wait(1000)
         pygame.mixer.music.pause()
+        self.sound(8)
         self.start_img_simon = 0
         self.previous = False
         alpha = 30
@@ -552,12 +556,12 @@ class Screen(threading.Thread):
 ##            print(self.start_img_simon)
             # อนิเมชั่นหยุด
             if self.start_img_simon == 120:
-                print('sound')
+##                print('sound')
                 self.sound(1)
                 self.start_img_simon += 1
                 self.t1 = threading.Thread(target=simon)
                 self.t1.start()
-                print(recognize)
+##                print(recognize)
 ##                print(self.start_img_simon, 'enter')
                 self.wave_done = True
                 T_speech = threading.Thread(target=self.speech_input)
@@ -584,7 +588,8 @@ class Screen(threading.Thread):
         global simon_done, recognize
         self.speech_ = True
         while self.speech_ and recognize.find('ออก') < 0:
-            print('s')
+##            print('s')
+            self.listen_command, self.listen_num = False,False
             while not self.listen_num and recognize.find('ออก') < 0:                
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -599,9 +604,9 @@ class Screen(threading.Thread):
                         self.command_ = 'ใส่ตัวเลขหน่อย'
                         self.start_img_simon += 1
                         self.sound(2)
-                        print(simon_done)
+##                        print(simon_done)
                         self.listen_command = True
-                    if recognize.find('ช่วยกด') >= 0 and recognize.find('yes') >= 0 and recognize.find('no'):
+                    elif recognize.find('ช่วยกด') >= 0 and recognize.find('yes') >= 0 and recognize.find('no'):
                         simon_done = False
                         self.command_ = 'ช่วยกด yes no'
                         self.start_img_simon += 1
@@ -613,7 +618,7 @@ class Screen(threading.Thread):
                     elif recognize != '' and recognize.find('ออก') < 0 and recognize.find('พูดอีกครั้ง') < 0:
 ##                        print(recognize)
                         simon_done = False
-                        print(simon_done)
+##                        print(simon_done)
                         self.sound(2)
                         self.sound(0)
                         pygame.time.wait(7000)
@@ -628,7 +633,8 @@ class Screen(threading.Thread):
 ##                    pygame.time.wait(1000)  
                 if recognize.isdigit():
                     simon_done = False
-                    if 0 > int(recognize) > 127:
+                    if int(recognize) > 127:
+                        self.sound(2)
                         self.sound(4)
                         pygame.time.wait(6000)
                         self.sound(1)
@@ -655,26 +661,35 @@ class Screen(threading.Thread):
                     self.t1.start()
     # พูด yes no
     def simon_yes_no(self):
-        global simon_done
+        global simon_done, recognize
         self.listen_command = False
         self.sound(6)
         pygame.time.wait(5000)
         self.sound(1)
         self.t1 = threading.Thread(target=simon)
         self.t1.start()
-        while not self.listen_command:
+        while not self.listen_command and recognize.find('ออก') < 0:
             if recognize.find('ไม่มี') >= 0:
                 simon_done = False
+                self.sound(2)
                 self.no += 1
                 self.i += 1
                 pygame.time.wait(1000)
                 self.listen_command = True
             elif recognize.find('มี') >= 0 and recognize.find('ไม่มี') < 0:
                 simon_done = False
+                self.sound(2)
                 self.list_box[self.random_box[self.i]] = 1
                 self.yes += 1
                 self.i += 1
                 pygame.time.wait(1000)
+                self.listen_command = True
+            elif recognize != '' and recognize.find('มี') < 0:
+                simon_done = False
+                self.sound(2)
+                self.sound(7)
+                recognize = ''
+                pygame.time.wait(5000)
                 self.listen_command = True
                     
 
@@ -691,7 +706,7 @@ def simon():
     recognize = ''
     simon_done = True
     while simon_done:
-        print('test')
+        print('talk')
         with m as source:
             r.adjust_for_ambient_noise(source)
             audio = r.listen(source)
