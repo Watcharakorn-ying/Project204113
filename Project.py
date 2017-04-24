@@ -357,33 +357,33 @@ class Screen(threading.Thread):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         if width <= mouse[0] <= width + width_p and height + 38 <= mouse[1] <= height + height_p + 38:
-            self.screen.blit(a_new_button, (width,height))            
+            self.screen.blit(a_new_button, (width,height))
             if click[0] == 1:
                 pygame.mixer.Sound.play(self.button_a)
                 if action == "Next":
                     self.running = False
                     self.back = False
-                    clock = pygame.time.wait(150)
+                    clock = pygame.time.wait(300)
                 elif action == "References":
                     self.running = False
                     self.References = True
-                    clock = pygame.time.wait(150)
+                    clock = pygame.time.wait(300)
                 elif action == "Back":
                     self.running = False
                     self.back = True
                     self.Provider = False
                     self.Provider = False
                     self.References = False
-                    clock = pygame.time.wait(150)
+                    clock = pygame.time.wait(300)
                 elif action == "No":
                     self.no += 1
                     self.i += 1
-                    clock = pygame.time.wait(150)
+                    clock = pygame.time.wait(300)
                 elif action == "Yes":
                     self.list[self.random_box[self.i]] = 1
                     self.yes += 1
                     self.i += 1
-                    clock = pygame.time.wait(150)
+                    clock = pygame.time.wait(300)
                 elif action == "NewGame":
                     self.use = ""
                     self.no = 0
@@ -399,14 +399,14 @@ class Screen(threading.Thread):
                 elif action == "Provider":
                     self.running = False
                     self.Provider = True
-                    clock = pygame.time.wait(150)
+                    clock = pygame.time.wait(300)
                 elif action == "MainManu":
                     self.running = True
                     self.back = False
                     self.Provider = False
                     self.References = False
                     self.run()
-                    clock = pygame.time.wait(150)
+                    clock = pygame.time.wait(300)
                 elif action == "Quit":
                     self.quit_function()
         else:
