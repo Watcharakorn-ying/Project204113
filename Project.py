@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+#---------------import module---------------#
 import time
 import pygame
 import pyaudio
@@ -9,16 +10,17 @@ import random
 import threading
 import speech_recognition as sr
 from gtts import gTTS
+#---------------file in folder---------------#
 import mp3
 from read_folder import *
 
+## คลาส Linked List ไว้สำหรับจัดการ Node
 class group:
 
     def __init__(self, at, num, n=None):
         self.position = at
         self.number = num
         self.next = n
-        
 
     def get_next(self):
         return self.next
@@ -29,8 +31,9 @@ class group:
     def get_number(self):
         return self.number
 
+## คลาส แรนดอมตัวเลขจากข้อมูล input จาก user
 class random_number(object):
-    
+
     def __init__(self,num):
         self.root = []
         self.length = 0
@@ -40,7 +43,6 @@ class random_number(object):
                 self.root[i.position] = i
                 if self.length == 0:
                     self.length = 1
-                    
                 continue
             else: curr = self.root[i.position]
             mlength = 1
@@ -53,7 +55,7 @@ class random_number(object):
                 self.length = mlength
         self.check_length(num)
 
-    def add(self,num):
+    def add(self,num):  #  generater แรนดอมตัวเลข 1 ถึง input
         generater = (((((num * 80) + 1) * 250) - 250) // 2) // (10**4)
         binary = bin(num)[2:]
         self.box = len(binary)
@@ -66,12 +68,12 @@ class random_number(object):
                 if b == '1':
                     yield group(count,i)
                 count += 1
-    def show(self, at):
+    def show(self, at):  #  ดึงตัวเลขทั้งหมดที่เก็บไว้ในชุดข้อมูล Tree ตำแหน่งที่ at
         curr = self.root[at]
         while curr:
             yield curr.get_number()
             curr = curr.get_next()
-    def check_length(self,num):
+    def check_length(self,num):  #  เช็คชุดข้อมูลว่ามีจำนวนที่เท่ากับชุดข้อมูลที่มีจำนวนตัวเลขสูงสุดหรือไม่
         count_box = 0
         for box in self.root:
             length_box = 1
@@ -82,8 +84,7 @@ class random_number(object):
                 distance = self.length - length_box
                 self.add_random(num,count_box,distance)
             count_box += 1
-    
-    def add_random(self,num,box,distance):
+    def add_random(self,num,box,distance):  #  ทำให้ชุดข้อมูลแต่ละชุดมีจำนวนตัวเลขที่เท่ากันโดยแรนดอมตัวเลขที่มากกว่า input เล็กน้อย
         curr_box = self.root[box]
         for r in range(distance,0,-1):
             while curr_box.get_next():
@@ -95,10 +96,11 @@ class random_number(object):
                     ran_num = group(box,num)
                     curr_box.set_next(ran_num)
                     break
-    def sent_AI(self, ls):
+    def sent_AI(self, ls):  #  ข้อมูลที่เรียนรู้ได้ นำส่งต่อกระบวนการ process ตัวเลขที่ user คิดไว้ในใจ
         self.data = AI(ls)
         return str(self.data.ai)
 
+## คลาส สำหรับให้ AI process ตัวเลขที่ user คิดไว้ในใจ
 class AI:
 
     def __init__(self, ls):
@@ -113,10 +115,11 @@ class AI:
         for cal in self.match:
             self.ai += (self.kd << cal)
 
+## คลาสหน้าจอแสดงผลสำหรับ pygame
 class Screen(threading.Thread):
-    """ 
+    """
     ############################################################
-    ################            Setup           ################
+    ################         SetupScreen        ################
     ############################################################
     """
     def __init__(self, width=640, height=400, fps=30):
@@ -125,6 +128,8 @@ class Screen(threading.Thread):
         pygame.display.set_caption("Guess")
         self.width = width
         self.height = height
+        self.width_text = width
+        self.height_text = height
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.white = (255,255,255)
         self.black = (0,0,0)
@@ -142,11 +147,11 @@ class Screen(threading.Thread):
         self.number_input = ""
         self.background = read_folder("Image", ".jpg")
         self.icon_bottom = read_folder("Image", ".png")
-        self.voice_simon = read_folder("sound_simon", ".wav") #['understand.wav','Siri1.wav','Siri2.wav','talk_num.wav']
+        self.voice_simon = read_folder("sound_simon", ".wav")
         self.image_simon = read_folder("simon", ".jpeg")
         self.witch_sound = pygame.mixer.Sound("Song\witch.wav")
         self.button_a = pygame.mixer.Sound("Song\\01_button_sound.wav")
-    """ 
+    """
     ############################################################
     ################            Start           ################
     ############################################################
@@ -170,11 +175,9 @@ class Screen(threading.Thread):
             self.Provider_screen()
         elif self.References:
             self.References_screen()
-##        elif self.Provider is False and self.References is False:
-##            self.how_to()
         else:
             self.how_to()
-            
+
     # หน้ารายชื่อคนทำ
     def Provider_screen(self):
         while self.running:
@@ -186,7 +189,7 @@ class Screen(threading.Thread):
             pygame.display.update()
         self.running = True
         self.run()
-    
+
     # หน้าอ้างอิง 1
     def References_screen(self):
         while self.running:
@@ -196,7 +199,7 @@ class Screen(threading.Thread):
             self.screen.blit(pygame.image.load(self.background[8]),(0,0))
             self.button(447, 485, 246, 42, "Next", pygame.image.load(self.icon_bottom[3]), pygame.image.load(self.icon_bottom[2]))
             self.button(100, 485, 246, 42, "Back", pygame.image.load(self.icon_bottom[1]),  pygame.image.load(self.icon_bottom[0]))
-            pygame.display.update()         
+            pygame.display.update()
         self.running = True
         if self.back:
             self.run()
@@ -215,7 +218,7 @@ class Screen(threading.Thread):
             pygame.display.update()
         self.running = True
         self.References_screen()
-    
+
     # หน้า How to play
     def how_to(self):
         pygame.mixer.music.load("Song\Day_Of_Recon.mp3")
@@ -223,8 +226,8 @@ class Screen(threading.Thread):
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.quit_function()                   
-            self.screen.blit(pygame.image.load(self.background[0]),(0,0))#x = 246 y = 42 
+                    self.quit_function()
+            self.screen.blit(pygame.image.load(self.background[0]),(0,0))#x = 246 y = 42
             self.button(100, 485, 246, 42, "Next", pygame.image.load(self.icon_bottom[3]), pygame.image.load(self.icon_bottom[2]))
             self.button(447, 485, 246, 42, "Back", pygame.image.load(self.icon_bottom[1]),  pygame.image.load(self.icon_bottom[0]))
             pygame.display.update()
@@ -242,6 +245,7 @@ class Screen(threading.Thread):
         pygame.mixer.music.set_volume(0.3)
         pygame.mixer.music.play(-1)
         while self.running:
+           ##----------------------------AI Simon assistant Work----------------------------##
             try:
                 if recognize == 'หวัดดีไซมอน' or recognize.find('ไซมอน') >= 0 or recognize.find('ไซม่อน') >= 0:
                     simon_done = False
@@ -251,6 +255,7 @@ class Screen(threading.Thread):
                 else:Error
             except:
                 pass
+           ##-------------------------------------------------------------------------------##
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quit_function()
@@ -274,7 +279,7 @@ class Screen(threading.Thread):
             self.button(100, 450, 246, 42, "Next", pygame.image.load(self.icon_bottom[9]), pygame.image.load(self.icon_bottom[8]))
             self.button(447, 450, 246, 42, "Back", pygame.image.load(self.icon_bottom[1]),  pygame.image.load(self.icon_bottom[0]))
             if self.back is False:
-                if self.running is False and self.number_input == "":
+                if self.running is False and self.number_input == "":  # เมื่อไม่มีตัวเลขจะกด next ไม่ไป
                     self.running = True
             pygame.display.update()
         self.running = True
@@ -285,12 +290,13 @@ class Screen(threading.Thread):
 
     # หน้าแสดวงตัวเลขแล้วกด Y/N
     def number(self):
-        global simon_done
+        global simon_done, guess
         guess = random_number(int(self.number_input)) # input
         self.random_box = [i for i in range(guess.box)]
         random.shuffle(self.random_box)
         self.list_box = [0] * guess.box
         while self.running:
+           ##----------------------------AI Simon assistant Work----------------------------##
             try:
                 if recognize == 'หวัดดีไซมอน' or recognize.find('ไซมอน') >= 0 or recognize.find('ไซม่อน') >= 0:
                     simon_done = False
@@ -300,15 +306,16 @@ class Screen(threading.Thread):
                 else:Error
             except:
                 pass
+           ##-------------------------------------------------------------------------------##
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quit_function()
             self.screen.blit(pygame.image.load(self.background[2]),(0,0))
             if self.i < guess.box:
-                self.height = 2500
+                self.height_text = 2500
                 a = list(map(str, guess.show(self.random_box[self.i])))
                 num = 0
-                if self.listen_command:
+                if self.listen_command:  # เมื่อสั่งให้กด yes no จาก "หวัดดีไซมอน" ส่วนนี้จะทำงานควบคู่กันไป
                     self.t2 = threading.Thread(target=self.simon_yes_no)
                     self.t2.start()
                 for j in range(guess.length):
@@ -322,7 +329,7 @@ class Screen(threading.Thread):
                         self.use += str(a[j])
                         self.use += "  "
                         num = 1
-                        self.height += 700
+                        self.height_text += 700
                 self.draw_text(self.use, self.black)
                 self.use = ""
                 self.button(100, 450, 246, 42, "Yes", pygame.image.load(self.icon_bottom[11]), pygame.image.load(self.icon_bottom[10]))
@@ -337,8 +344,6 @@ class Screen(threading.Thread):
 
     # หน้าจบ
     def last_seen(self, text):
-        self.t1 = threading.Thread(target=simon)
-        self.t1.start()
         pygame.mixer.Sound.play(self.witch_sound)
         pygame.mixer.music.load("Song\Guess_Who.mp3")
         pygame.mixer.music.set_volume(1)
@@ -407,7 +412,7 @@ class Screen(threading.Thread):
         self.font = pygame.font.Font("CHILLER.TTF", 30)
         fw, fh = self.font.size(text)
         surface = self.font.render(text, True, color)
-        self.screen.blit(surface, ((self.width - fw) // 2, (self.height - fh) // 20))
+        self.screen.blit(surface, ((self.width_text - fw) // 2, (self.height_text - fh) // 20))
 
     # ปุ่ม
     def button(self, width, height, width_p, height_p, action, b_new_button, a_new_button): 
@@ -420,10 +425,6 @@ class Screen(threading.Thread):
                 if action == "Next":
                     self.running = False
                     self.back = False
-                    clock = pygame.time.wait(300)
-                elif action == "References":
-                    self.running = False
-                    self.References = True
                     clock = pygame.time.wait(300)
                 elif action == "Back":
                     self.running = False
@@ -440,6 +441,14 @@ class Screen(threading.Thread):
                     self.yes += 1
                     self.i += 1
                     clock = pygame.time.wait(300)
+                elif action == "Provider":
+                    self.running = False
+                    self.Provider = True
+                    clock = pygame.time.wait(300)
+                elif action == "References":
+                    self.running = False
+                    self.References = True
+                    clock = pygame.time.wait(300)
                 elif action == "NewGame":
                     self.use = ""
                     self.no = 0
@@ -452,10 +461,6 @@ class Screen(threading.Thread):
                     self.References = False
                     self.number_input = ""
                     self.put_number_screen()
-                elif action == "Provider":
-                    self.running = False
-                    self.Provider = True
-                    clock = pygame.time.wait(300)
                 elif action == "MainManu":
                     self.running = True
                     self.back = False
@@ -468,18 +473,17 @@ class Screen(threading.Thread):
         else:
             self.screen.blit(b_new_button, (width,height))
 
-    """ 
+    """
     ############################################################
     ################    AI Simon assistant      ################
     ############################################################
     """
+    #  คลื่นจากเสียงที่พูด
     def simon_wave(self):
-##        print('wave')
         self.CHUNK = 1024
         FORMAT = pyaudio.paInt16
         CHANNELS = 2
         RATE = 44100
-        RECORD_SECONDS = 5
         p = pyaudio.PyAudio()
         self.stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=self.CHUNK)
         clock=pygame.time.Clock()
@@ -489,7 +493,6 @@ class Screen(threading.Thread):
         self.max_value = [0]*3
         self.current_section = 0
         while self.wave_done:
-            
             total = 0
             for i in range(0,2):
                 data=self.stream.read(self.CHUNK)
@@ -498,22 +501,20 @@ class Screen(threading.Thread):
                     total=total+reading
                 time.sleep(.0001)
             total=total/100
-##            print(total)
-            self.screen.blit(pygame.image.load(self.image_simon[self.start_img_simon]), (0,0))
-            
             self.sound_tracks[self.current_section] = self.sound_tracks[self.current_section][1:] + [total]
             self.max_value[self.current_section] = max(self.max_value[self.current_section], total)
+            self.screen.blit(pygame.image.load(self.image_simon[self.start_img_simon]), (0,0))
             for t in range(1):
                 sectionx = t*self.width/3 + self.margin
                 for j in range(0,self.width//3 - 2*self.margin):
                     x = j + sectionx
                     y = self.height - self.sound_tracks[t][j]
-##                    print(self.sound_tracks[t][j])
                     pygame.draw.rect(self.screen,self.blue,(x, y, 1, self.sound_tracks[t][j]))
             pygame.display.flip()
 
+    #  ภาพเคลื่อนไหวการทำงานของ AI Simon
     def simon_anime(self):
-        global T_wave
+        global T_wave, recognize
         pygame.time.wait(1000)
         pygame.mixer.music.pause()
         self.sound(8)
@@ -528,10 +529,10 @@ class Screen(threading.Thread):
             rect = image.get_rect()
             image.set_alpha(alpha)
             self.screen.blit(image, rect)
-            if alpha != 50:
+            if alpha != 50:  #  ความเร็วตอนเฟด
                 alpha += 1
-            if self.start_img_simon == 260:
-                if self.command_ == 'ใส่ตัวเลขหน่อย':
+            if self.start_img_simon == 260:  #  เคลื่อนไหวภาพถึงภาพที่ 260
+                if self.command_ == 'ใส่ตัวเลขหน่อย':  #  คำสั่งการทำงานต่อ
                     self.sound(3)
                 elif self.command_ == 'ช่วยกด yes no':
                     self.sound(5)
@@ -546,35 +547,30 @@ class Screen(threading.Thread):
                 self.t1 = threading.Thread(target=simon)
                 self.t1.start()
                 self.sound(1)
-            # ใส่ตัวเลข
+            # เคลื่อนไหวภาพเมื่อบอกคำสั่ง "ใส่ตัวเลขหน่อย"
             if self.start_img_simon <= 120 or 122 <= self.start_img_simon < 260:
                 if 122 <= self.start_img_simon <= 260 and self.previous:
                     self.start_img_simon -= 1
                     continue
                 else:
                     self.start_img_simon += 1
-##            print(self.start_img_simon)
-            # อนิเมชั่นหยุด
+            # อนิเมชั่นหยุดเหมือนถึงภาพที่ 120
             if self.start_img_simon == 120:
-##                print('sound')
                 self.sound(1)
                 self.start_img_simon += 1
                 self.t1 = threading.Thread(target=simon)
                 self.t1.start()
-##                print(recognize)
-##                print(self.start_img_simon, 'enter')
                 self.wave_done = True
-                T_speech = threading.Thread(target=self.speech_input)
-                T_wave = threading.Thread(target=self.simon_wave)
-                T_wave.start()
-                T_speech.start()
-##                T_speech.join()
-            # พูดตัวเลขกับพูดออก
+                T_speech = threading.Thread(target=self.speech_input)   ##
+                T_speech.start()                                        # #### เปิดการทำงานระบบสั่งการด้วยเสียงและคลื่นเสียงพูด
+                T_wave = threading.Thread(target=self.simon_wave)       # ##
+                T_wave.start()                                          ##
+            # เมื่อพูดตัวเลขหรือพูดออก
             if (self.start_img_simon == 121 and self.previous) or recognize.find('ออก') >= 0:
                 if recognize.find('ออก') >= 0:
-                    pass
+                    recognize = ''
                 else:
-                    voice = mp3.talktalk(self.string_talk, 'sound_simon/number.mp3')
+                    voice = mp3.talktalk(self.string_talk, 'sound_simon/number.mp3')  #  แปลงเสียงพูดจาก self.string_talk
                     self.string_talk = ''
                     pygame.time.wait(4000)
                     self.t1 = threading.Thread(target=simon)
@@ -584,27 +580,19 @@ class Screen(threading.Thread):
             pygame.display.flip()
         pygame.mixer.music.unpause()
 
+    #  ระบบสั่งการด้วยเสียง
     def speech_input(self):
         global simon_done, recognize
         self.speech_ = True
         while self.speech_ and recognize.find('ออก') < 0:
-##            print('s')
             self.listen_command, self.listen_num = False,False
-            while not self.listen_num and recognize.find('ออก') < 0:                
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        self.quit_function()
+            while not self.listen_num and recognize.find('ออก') < 0:
                 while not self.listen_command and recognize.find('ออก') < 0:
-                    for event in pygame.event.get():
-                        if event.type == pygame.QUIT:
-                            pygame.quit()
-                            quit()
                     if recognize.find('ใส่ตัวเลขหน่อย') >= 0:
                         simon_done = False
                         self.command_ = 'ใส่ตัวเลขหน่อย'
                         self.start_img_simon += 1
                         self.sound(2)
-##                        print(simon_done)
                         self.listen_command = True
                     elif recognize.find('ช่วยกด') >= 0 and recognize.find('yes') >= 0 and recognize.find('no'):
                         simon_done = False
@@ -616,22 +604,14 @@ class Screen(threading.Thread):
                         self.speech_ = False
                         pass
                     elif recognize != '' and recognize.find('ออก') < 0 and recognize.find('พูดอีกครั้ง') < 0:
-##                        print(recognize)
                         simon_done = False
-##                        print(simon_done)
                         self.sound(2)
                         self.sound(0)
                         pygame.time.wait(7000)
                         self.sound(1)
                         self.t1 = threading.Thread(target=simon)
                         self.t1.start()
-##                    elif recognize.find('พูดอีกครั้ง') >= 0:
-##                        self.sound(1)
-##                        pygame.time.wait(1000)  
-##                if recognize.find('ต้องการใส่หมายเลข') >= 0:
-##                    self.sound(1)
-##                    pygame.time.wait(1000)  
-                if recognize.isdigit():
+                if recognize.isdigit():  #  ค้นหาtextที่มีแต่ตัวเลข
                     simon_done = False
                     if int(recognize) > 127:
                         self.sound(2)
@@ -643,13 +623,10 @@ class Screen(threading.Thread):
                     else:
                         self.number_input = recognize
                         recognize = ''
-##                        print(self.start_img_simon)
                         self.start_img_simon -= 2
                         self.previous = True
                         self.sound(2)
                         self.string_talk = 'นำตัวเลข %s ใส่เข้าไปแล้วค่ะ' %self.number_input
-##                        print(self.string_talk)
-##                        print('a')
                         self.listen_num = True
                         self.speech_ = False
                 elif recognize.find('ศูนย์') >= 0:
@@ -659,7 +636,8 @@ class Screen(threading.Thread):
                     self.sound(1)
                     self.t1 = threading.Thread(target=simon)
                     self.t1.start()
-    # พูด yes no
+
+    #  ระบบสั่งการด้วยเสียงพูด yes no
     def simon_yes_no(self):
         global simon_done, recognize
         self.listen_command = False
@@ -691,8 +669,11 @@ class Screen(threading.Thread):
                 recognize = ''
                 pygame.time.wait(5000)
                 self.listen_command = True
-                    
+        if self.i == guess.box:
+            self.t1 = threading.Thread(target=simon)
+            self.t1.start()
 
+    #  เสียงตอบรับ Simon
     def sound(self, at):
         pygame.mixer.music.pause()
         sound = pygame.mixer.Sound(self.voice_simon[at]).play()
@@ -700,7 +681,6 @@ class Screen(threading.Thread):
 
 def simon():
     global recognize,simon_done
-##    t1 = threading.Thread(target=simon)
     r = sr.Recognizer()
     m = sr.Microphone()
     recognize = ''
@@ -719,7 +699,6 @@ def simon():
                 return
     recognize = ''
     print("Simon Finish")
-##    t1.start()
 
 def main():
     t1 = threading.Thread(target=simon)
@@ -731,6 +710,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+####################------------TEST DEBUG------------####################
 ##    Screen(800, 600).run()
 ##    simon()
 ##    Screen(800, 600).simon_anime()
@@ -738,10 +718,10 @@ if __name__ == '__main__':
 ##    t2 = threading.Thread(target= Sceen(800, 600).run())  
 ##    t2.start()
 ##    t1.join()
-##    guess = random_number(51)
+##    guess = random_number(63)
 ##    for  i in range(guess.box):
 ##        a = list(map(str, guess.show(i)))
 ##        print(a)
 ##        print('-------------------------------------')
 ##        print('-------------------------------------')
-##    print(guess.list_length)
+##    print(guess.length)
